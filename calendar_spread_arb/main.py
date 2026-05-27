@@ -116,13 +116,16 @@ def main():
     api_key    = os.environ.get("SHIOAJI_API_KEY")
     secret_key = os.environ.get("SHIOAJI_SECRET_KEY")
 
-    if api_key and secret_key:
+    use_mock = os.environ.get("USE_MOCK", "").lower() in ("1", "true", "yes")
+
+    if api_key and secret_key and not use_mock:
         from calendar_spread_arb.shioaji_feed import ShioajiFeed
         feed = ShioajiFeed(api_key=api_key, secret_key=secret_key)
         print(f"  行情來源：永豐金 Shioaji API（真實行情）")
     else:
         feed = MockFeed(spot_price=config.SIMULATED_SPOT)
-        print(f"  行情來源：MockFeed（模擬行情）")
+        reason = "USE_MOCK=true" if use_mock else "未設定 API 金鑰"
+        print(f"  行情來源：MockFeed（模擬行情，原因：{reason}）")
     print("=" * 60)
     print("按 Ctrl+C 停止\n")
 
