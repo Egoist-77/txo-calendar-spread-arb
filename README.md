@@ -3,6 +3,7 @@
 [![Tests](https://github.com/Egoist-77/txo-calendar-spread-arb/actions/workflows/tests.yml/badge.svg)](https://github.com/Egoist-77/txo-calendar-spread-arb/actions/workflows/tests.yml)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![Last Commit](https://img.shields.io/github/last-commit/Egoist-77/txo-calendar-spread-arb)](https://github.com/Egoist-77/txo-calendar-spread-arb/commits/master)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 以 Python 實作的台指選擇權（TXO）跨月份 IV Spread 套利偵測系統。
 
