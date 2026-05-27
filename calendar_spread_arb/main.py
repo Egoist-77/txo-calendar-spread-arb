@@ -17,6 +17,11 @@ from datetime import datetime, timezone, timedelta
 # 台灣標準時間 UTC+8
 _TZ_CST = timezone(timedelta(hours=8))
 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # 讀取 .env 檔案（若存在）
+
 from calendar_spread_arb import config
 from calendar_spread_arb.mock_feed import MockFeed, TickData
 from calendar_spread_arb.iv_engine import calc_all_ivs
@@ -106,10 +111,21 @@ def main():
           f"z-score 門檻：{config.ZSCORE_THRESHOLD}")
     print(f"  信號模式：{config.SIGNAL_MODE}")
     print(f"  報價新鮮度視窗：{config.STALE_MS}ms")
+    # ── 自動選擇行情來源 ──────────────────────────────────────
+    # 有 .env API 金鑰 → 真實 Shioaji；否則 → MockFeed 模擬
+    api_key    = os.environ.get("SHIOAJI_API_KEY")
+    secret_key = os.environ.get("SHIOAJI_SECRET_KEY")
+
+    if api_key and secret_key:
+        from calendar_spread_arb.shioaji_feed import ShioajiFeed
+        feed = ShioajiFeed(api_key=api_key, secret_key=secret_key)
+        print(f"  行情來源：永豐金 Shioaji API（真實行情）")
+    else:
+        feed = MockFeed(spot_price=config.SIMULATED_SPOT)
+        print(f"  行情來源：MockFeed（模擬行情）")
     print("=" * 60)
     print("按 Ctrl+C 停止\n")
 
-    feed = MockFeed(spot_price=config.SIMULATED_SPOT)
     feed.subscribe(on_tick)
 
     # 優雅停止
