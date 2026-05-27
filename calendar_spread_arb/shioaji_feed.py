@@ -16,7 +16,6 @@ from datetime import datetime, timezone
 from typing import Callable, List, Optional
 
 import shioaji as sj
-from shioaji.constant import QuoteType
 
 from calendar_spread_arb.mock_feed import TickData
 from calendar_spread_arb import config
@@ -81,10 +80,9 @@ class ShioajiFeed:
         print("[ShioajiFeed] 取消訂閱...")
         for _, contract in list(self._code_to_info.values()):
             try:
-                self._api.quote.unsubscribe(
+                self._api.unsubscribe(
                     contract,
-                    quote_type=QuoteType.BidAsk,
-                    version=sj.constant.BidAskFOPv1,
+                    quote_type=sj.QuoteType.BidAsk,
                 )
             except Exception:
                 pass
@@ -115,10 +113,9 @@ class ShioajiFeed:
                         # 建立 internal_code → (symbol, contract) 的對照表
                         self._code_to_info[contract.code] = (symbol, contract)
 
-                        self._api.quote.subscribe(
+                        self._api.subscribe(
                             contract,
-                            quote_type=QuoteType.BidAsk,
-                            version=sj.constant.BidAskFOPv1,
+                            quote_type=sj.QuoteType.BidAsk,
                         )
                         success += 1
                     except Exception as e:
