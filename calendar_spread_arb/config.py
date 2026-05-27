@@ -8,7 +8,7 @@
 RISK_FREE_RATE: float = 0.02        # 無風險利率（年化 2%，台灣央行基準利率估計值）| 有效範圍 0.0~1.0
 
 # --- 套利信號門檻 ---
-FIXED_THRESHOLD: float = 0.02       # 固定 IV Spread 門檻（0.02 = 2%）| 有效範圍 0.0~1.0
+FIXED_THRESHOLD: float = 0.04       # 固定 IV Spread 門檻（0.04 = 4%）| 有效範圍 0.0~1.0
 ZSCORE_THRESHOLD: float = 2.0       # z-score 動態門檻（標準差倍數）| 有效範圍 0.0~5.0
 ZSCORE_MIN_SAMPLES: int = 30        # 啟用 z-score 所需的最少歷史樣本數
 
@@ -19,7 +19,7 @@ STALE_MS: int = 500                 # 報價最大可接受延遲（毫秒）
 SPREAD_HISTORY_LEN: int = 200       # 每個 (strike, cp) 保存的 spread 歷史長度 | 必須 >= ZSCORE_MIN_SAMPLES
 
 # --- 信號觸發模式 ---
-SIGNAL_MODE: str = "OR"             # "OR"：固定門檻 OR z-score 任一觸發即產生信號
+SIGNAL_MODE: str = "AND"            # "OR"：固定門檻 OR z-score 任一觸發即產生信號
                                     # "AND"：兩者同時滿足才觸發（更嚴格）
 
 # --- 模擬參數 ---

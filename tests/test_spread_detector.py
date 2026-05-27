@@ -47,8 +47,11 @@ class TestFreshnessGuardInDetector:
 
 
 class TestFixedThreshold:
-    def test_fixed_threshold_triggered(self):
-        # far_bid=0.25 - near_ask=0.20 = 0.05 > 0.02 (FIXED_THRESHOLD)
+    def test_fixed_threshold_triggered(self, monkeypatch):
+        # 固定 SIGNAL_MODE=OR + FIXED_THRESHOLD=0.02，只測固定門檻邏輯
+        monkeypatch.setattr(config, "SIGNAL_MODE", "OR")
+        monkeypatch.setattr(config, "FIXED_THRESHOLD", 0.02)
+        # far_bid=0.25 - near_ask=0.20 = 0.05 > 0.02
         store = _make_store_with_ivs(
             near_bid=0.19, near_ask=0.20,
             far_bid=0.25,  far_ask=0.27
@@ -57,8 +60,10 @@ class TestFixedThreshold:
         assert result is not None
         assert result["fixed_triggered"] is True
 
-    def test_fixed_threshold_not_triggered(self):
+    def test_fixed_threshold_not_triggered(self, monkeypatch):
         # far_bid=0.205 - near_ask=0.20 = 0.005 < 0.02
+        monkeypatch.setattr(config, "SIGNAL_MODE", "OR")
+        monkeypatch.setattr(config, "FIXED_THRESHOLD", 0.02)
         store = _make_store_with_ivs(
             near_bid=0.19, near_ask=0.20,
             far_bid=0.205, far_ask=0.215
@@ -91,7 +96,9 @@ class TestZScoreThreshold:
 
 
 class TestSignalContent:
-    def test_signal_contains_required_fields(self):
+    def test_signal_contains_required_fields(self, monkeypatch):
+        monkeypatch.setattr(config, "SIGNAL_MODE", "OR")
+        monkeypatch.setattr(config, "FIXED_THRESHOLD", 0.02)
         store = _make_store_with_ivs(
             near_bid=0.19, near_ask=0.20,
             far_bid=0.25,  far_ask=0.27
@@ -104,8 +111,10 @@ class TestSignalContent:
         }
         assert required_keys.issubset(result.keys())
 
-    def test_direction_buy_near_sell_far(self):
+    def test_direction_buy_near_sell_far(self, monkeypatch):
         # far_bid=0.25 - near_ask=0.20 = 0.05（正值，買近月、賣遠月有利）
+        monkeypatch.setattr(config, "SIGNAL_MODE", "OR")
+        monkeypatch.setattr(config, "FIXED_THRESHOLD", 0.02)
         store = _make_store_with_ivs(
             near_bid=0.19, near_ask=0.20,
             far_bid=0.25,  far_ask=0.27
