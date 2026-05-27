@@ -106,9 +106,9 @@ class ShioajiFeed:
                     try:
                         contract = self._api.Contracts.Options[symbol]
 
-                        # 第一個合約的 reference 作為現貨初始估計
-                        if success == 0 and contract.reference:
-                            self._spot = float(contract.reference)
+                        # 用合約的 reference 暫估現貨（開盤後 underlying_price 會即時更新）
+                        # reference 是選擇權昨日收盤參考價，非現貨，僅作啟動時 fallback
+                        # 真正的現貨由 _handle_bidask 中的 underlying_price 即時修正
 
                         # 建立 internal_code → (symbol, contract) 的對照表
                         self._code_to_info[contract.code] = (symbol, contract)
@@ -124,9 +124,9 @@ class ShioajiFeed:
 
         print(
             f"[ShioajiFeed] 訂閱完成：成功 {success} 個，"
-            f"失敗 {fail} 個（可能履約價不存在）"
+            f"失敗 {fail} 個（遠月尚未上市屬正常）"
         )
-        print(f"[ShioajiFeed] 現貨參考價：{self._spot:.0f}")
+        print(f"[ShioajiFeed] 等待開盤報價（日盤 08:45，夜盤 15:00）...")
 
     def _handle_bidask(self, bidask) -> None:
         """
