@@ -13,7 +13,9 @@ ZSCORE_THRESHOLD: float = 2.0       # z-score 動態門檻（標準差倍數）|
 ZSCORE_MIN_SAMPLES: int = 30        # 啟用 z-score 所需的最少歷史樣本數
 
 # --- 報價新鮮度守衛 ---
-STALE_MS: int = 500                 # 報價最大可接受延遲（毫秒）
+# 重要：STALE_MS 必須 > TICK_INTERVAL_MS × 合約數，否則 Freshness Guard 會封鎖所有信號
+# 建議：STALE_MS 至少是 TICK_INTERVAL_MS 的 3~5 倍
+STALE_MS: int = 3000                # 報價最大可接受延遲（毫秒）
 
 # --- 記憶體暫存設定 ---
 SPREAD_HISTORY_LEN: int = 200       # 每個 (strike, cp) 保存的 spread 歷史長度 | 必須 >= ZSCORE_MIN_SAMPLES
@@ -32,7 +34,7 @@ SIMULATED_STRIKES: list[int] = [22800, 23000, 23200, 23400, 23600, 23800, 24000,
 
 # --- MockFeed 專用參數（接真實 API 時不使用）---
 SIMULATED_SPOT: float = 23670.0     # 模擬台指現貨價（對應真實市場水準）
-TICK_INTERVAL_MS: float = 50.0      # 模擬 Tick 產生間隔（毫秒）
+TICK_INTERVAL_MS: float = 800.0     # 模擬 Tick 產生間隔（毫秒）| 建議不超過 STALE_MS/3
 
 # ============================================================
 # 運行時設定一致性驗證
