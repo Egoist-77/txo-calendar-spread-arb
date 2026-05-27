@@ -12,7 +12,10 @@
 import time
 import signal as _signal
 import atexit
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+# 台灣標準時間 UTC+8
+_TZ_CST = timezone(timedelta(hours=8))
 
 from calendar_spread_arb import config
 from calendar_spread_arb.mock_feed import MockFeed, TickData
@@ -85,7 +88,7 @@ def on_tick(tick: TickData) -> None:
     now = time.time()
     if now - _last_display_time >= 5.0:
         _last_display_time = now
-        ts_str = datetime.now(timezone.utc).strftime("%H:%M:%S")
+        ts_str = datetime.now(_TZ_CST).strftime("%H:%M:%S")
         iv_str = f"iv_mid={ivs['iv_mid']:.4f}" if ivs.get("iv_mid") else "iv_mid=N/A"
         print(
             f"[{ts_str}] 運行中... "

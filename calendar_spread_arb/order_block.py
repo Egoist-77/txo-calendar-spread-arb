@@ -7,7 +7,10 @@
 # ============================================================
 
 from typing import Dict, Any
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+
+# 台灣標準時間 UTC+8
+_TZ_CST = timezone(timedelta(hours=8))
 
 
 def _fmt_iv(value) -> str:
@@ -33,7 +36,7 @@ def on_signal(signal: Dict[str, Any]) -> None:
         print(f"[order_block] 警告：信號缺少必需欄位 {missing}，略過。")
         return
 
-    now_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+    now_str = datetime.now(_TZ_CST).strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
     direction_desc = {
         "BUY_NEAR_SELL_FAR": "買近月 + 賣遠月",
