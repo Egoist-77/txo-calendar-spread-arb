@@ -45,13 +45,8 @@ class ShioajiFeed:
         # 現貨參考價（從合約 reference 初始化，BidAsk 進來後即時更新）
         self._spot: float = config.SIMULATED_SPOT
 
-        # 合約對照表：internal_code → (symbol, expiry, strike, cp)
+        # 合約對照表：internal_code → (symbol, contract)
         self._code_to_info: dict = {}
-
-        # ── 必須在 login 前完成 callback 註冊 ──────────────────
-        @self._api.on_bidask_fop_v1()
-        def _bidask_handler(exchange, bidask):
-            self._handle_bidask(exchange, bidask)
 
     # ── 公開介面 ────────────────────────────────────────────────
 
@@ -69,6 +64,13 @@ class ShioajiFeed:
             fetch_contract=True,
         )
         print("[ShioajiFeed] 登入成功，開始訂閱合約...")
+
+        # 新版 Shioaji 要求登入後才能註冊 callback
+        # 且 callback 只接受 1 個參數（bidask），不再是 (exchange, bidask)
+        @self._api.on_bidask_fop_v1()
+        def _bidask_handler(bidask):
+            self._handle_bidask(bidask)
+
         self._subscribe_contracts()
 
     def stop(self) -> None:
@@ -129,7 +131,7 @@ class ShioajiFeed:
         )
         print(f"[ShioajiFeed] 現貨參考價：{self._spot:.0f}")
 
-    def _handle_bidask(self, exchange, bidask) -> None:
+    def _handle_bidask(self, bidask) -> None:
         """
         Shioaji BidAskFOPv1 → TickData → 呼叫 callbacks
 
