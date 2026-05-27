@@ -28,3 +28,11 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# 金鑰與環境變數（絕對不能 commit）
+.env
+*.pem
+*.key
+
+# 一次性測試腳本
+test_login.py
